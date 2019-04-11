@@ -4,9 +4,9 @@
 2.os.Stat()可以用于判断文件是否存在  
 3.reflect.Type()用于获取结构体变量的类型,进而获取成员的tag信息,
 reflect.Value()用于获取变结构体量的值,进而获取成员的值
-如果这两个函数的入参是指针变量,那么在进一步获取对象信息之前,需要调用.Elem()函数
-4.通过type.NumField()函数获取结构体成员的数量,结合for循环遍历成员
-5.可以对结构体成员自定义标签,在反射时使用
+如果这两个函数的入参是指针变量,那么在进一步获取对象信息之前,需要调用.Elem()函数  
+4.通过type.NumField()函数获取结构体成员的数量,结合for循环遍历成员  
+5.可以对结构体成员自定义标签,在反射时使用  
 6.必须使用以下方法发送post请求:
 ```go
 ...
@@ -24,4 +24,4 @@ req, err := http.NewRequest(http.MethodPost, reportConfig.JiraLoginUrl, strings.
 ```go
 req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 ```
-7.时间格式化,格式字符串必须使用2006-01-02 15:04:05这个时间点
+7.时间格式化,格式字符串必须使用2006-01-02 15:04:05这个时间点  
