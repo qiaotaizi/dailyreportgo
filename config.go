@@ -72,13 +72,11 @@ func parseConfig() *drCfg {
 	cfg := new(drCfg)
 	dailyReportGOXml, err := os.Open(configPositions[0])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "parseConfig: %v", err)
-		os.Exit(1)
+		log.Fatalf("parseConfig: %v", err)
 	}
 	defer dailyReportGOXml.Close()
 	if err := xml.NewDecoder(dailyReportGOXml).Decode(cfg); err != nil {
-		fmt.Fprintf(os.Stderr, "parseConfig: %v", err)
-		os.Exit(1)
+		log.Fatalf("parseConfig: %v", err)
 	}
 	return cfg
 }
