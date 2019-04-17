@@ -93,19 +93,20 @@ func jiraCalendarMission(userId int) []jiraMissionVo {
 		log.Fatalf("get jira missions request failed: %v", err)
 	}
 	var missions []jiraMissionVo
-	if err:=json.NewDecoder(resp.Body).Decode(&missions); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&missions); err != nil {
 		log.Fatalf("parse jira missions json failed: %v", err)
 	}
-	//时间转换
-	for _,m:=range missions{
-		m.startTime,err=time.Parse(format,m.Start)
-		if err!=nil{
-			log.Fatalf("parsing time %s error",m.Start)
+	//时间转换,完成度计算
+	for _, m := range missions {
+		m.startTime, err = time.Parse(format, m.Start)
+		if err != nil {
+			log.Fatalf("parsing time %s error", m.Start)
 		}
-		m.endTime,err=time.Parse(format,m.End)
-		if err!=nil{
-			log.Fatalf("parsing time %s error",m.End)
+		m.endTime, err = time.Parse(format, m.End)
+		if err != nil {
+			log.Fatalf("parsing time %s error", m.End)
 		}
+		m.progress=calProgress()
 	}
 	return missions
 }
@@ -140,6 +141,7 @@ type jiraMissionVo struct {
 	DatesError       bool   `json:"datesError"`
 	startTime        time.Time
 	endTime          time.Time
+	progress         int
 }
 
 //任务当前日期执行中

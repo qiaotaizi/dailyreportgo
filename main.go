@@ -2,11 +2,15 @@ package main
 
 import (
 	"log"
+	"time"
 )
 
 var reportConfig *drCfg
 
 func main() {
+	if !isWorkDay(time.Now()){
+
+	}
 	log.Println("welcome!")
 	//解析配置(配置不存在时生成一套默认配置,和模板)
 	//使用xml进行配置

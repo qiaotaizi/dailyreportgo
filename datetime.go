@@ -30,15 +30,30 @@ func init() {
 }
 
 //判断日期是否是工作日
+//逻辑:判断是否是法定节假日,是,返回false,不是,判断是否是周末,是,返回false,不是返回true
 func isWorkDay(date time.Time) bool {
+	if isHoliday(date){
+		return false
+	}
+	if !isWeekend(date){
+		return true
+	}
+	return isTX(date)
+}
+
+//判断日期是调休
+func isTX(date time.Time) bool {
+	return false
+}
+
+//判断日期是周末
+func isWeekend(date time.Time) bool {
 	wkd:=date.Weekday()
-	return wkd!=time.Saturday && wkd!=time.Sunday && isNotHoliday(date)
+	return wkd==time.Saturday || wkd==time.Sunday
 }
 
 //判断日期不是法定节日
 //后续完善
-func isNotHoliday(weekday time.Time) bool {
-	return true
+func isHoliday(date time.Time) bool {
+	return false
 }
-
-
