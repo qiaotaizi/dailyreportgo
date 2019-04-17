@@ -25,3 +25,4 @@ req, err := http.NewRequest(http.MethodPost, reportConfig.JiraLoginUrl, strings.
 req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 ```
 7.时间格式化,格式字符串必须使用2006-01-02 15:04:05这个时间点  
+8.测试文件以_test.go为后缀,测试方法以Test为前缀,入参为t *testing.T

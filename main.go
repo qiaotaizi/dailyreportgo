@@ -23,20 +23,19 @@ func main() {
 	//获取用户信息
 	userId := jiraForUser()
 	//获取calendar数据
-	jiraCalendarMission(userId)
+	missions:=jiraCalendarMission(userId)
 	//周二获取gitlab结对人提交数据
+	if needGitLabData() {
+		//登录gitlab
 
-	//登录gitlab
-
-	//循环分页获取gitlab提交信息,直到时间到达上周二
+		//循环分页获取gitlab提交信息,直到时间到达上周二
+	}
 
 	//检查模板是否存在,如果不存在,生成一套默认的
-
-	//获取模板
-
-	//填充模板
-
-	//生成日报
+	createTemplatesIfNotExist()
+	//获取模板 填充模板 生成日报
+	fillTemplate(missions)
 
 	//使用指定应用打开
 }
+
