@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/qiaotaiziqtz/dailyreportgo/holiday"
+	"log"
 	"time"
 )
 
@@ -20,10 +22,10 @@ var nextWorkDay time.Time
 
 //初始化下个工作日
 func init() {
-	nextWorkDay=time.Now()
-	for true{
-		nextWorkDay.AddDate(0,0,1)
-		if isWorkDay(nextWorkDay){
+	nextWorkDay = time.Now()
+	for true {
+		nextWorkDay.AddDate(0, 0, 1)
+		if isWorkDay(nextWorkDay) {
 			break
 		}
 	}
@@ -32,28 +34,47 @@ func init() {
 //判断日期是否是工作日
 //逻辑:判断是否是法定节假日,是,返回false,不是,判断是否是周末,是,返回false,不是返回true
 func isWorkDay(date time.Time) bool {
-	if isHoliday(date){
+	//定义方法
+	isHoliday := func(d time.Time) bool {
+		y := date.Year()
+		holidaysOfYear, ok := holiday.HolidayMap[y]
+		if !ok {
+			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
+		}
+		for _, h := range holidaysOfYear {
+			if time.Month(h.M) == date.Month() && h.D == date.Day() {
+				//找到当前日期
+				return h.T == holiday.Rest
+			}
+		}
 		return false
 	}
-	if !isWeekend(date){
+
+	isWeekend := func(d time.Time) bool {
+		wkd := date.Weekday()
+		return wkd == time.Saturday || wkd == time.Sunday
+	}
+
+	isTX := func(d time.Time) bool {
+		y := date.Year()
+		holidaysOfYear, ok := holiday.HolidayMap[y]
+		if !ok {
+			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
+		}
+		for _, h := range holidaysOfYear {
+			if time.Month(h.M) == date.Month() && h.D == date.Day() {
+				//找到当前日期
+				return h.T == holiday.Work
+			}
+		}
+		return false
+	}
+
+	if isHoliday(date) {
+		return false
+	}
+	if !isWeekend(date) {
 		return true
 	}
 	return isTX(date)
-}
-
-//判断日期是调休
-func isTX(date time.Time) bool {
-	return false
-}
-
-//判断日期是周末
-func isWeekend(date time.Time) bool {
-	wkd:=date.Weekday()
-	return wkd==time.Saturday || wkd==time.Sunday
-}
-
-//判断日期不是法定节日
-//后续完善
-func isHoliday(date time.Time) bool {
-	return false
 }

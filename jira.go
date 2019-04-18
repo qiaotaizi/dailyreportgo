@@ -111,6 +111,11 @@ func jiraCalendarMission(userId int) []jiraMissionVo {
 	return missions
 }
 
+func calProgress() int {
+	//计算完成度
+	return 0
+}
+
 //接收jira用户json数据
 type jiraUserVo struct {
 	Id         int    `json:"id"`

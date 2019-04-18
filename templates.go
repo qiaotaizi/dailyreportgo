@@ -136,7 +136,7 @@ func selectMissionsIntoReportContent(rc *reportContent, missions []jiraMissionVo
 					"%s http://jira.ttpai.cn/browse/%s %d%%",
 					m.Title,
 					m.Id,
-
+					m.progress,
 				)})
 		}
 		if m.inProgressNextWorkDay() {
