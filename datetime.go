@@ -37,7 +37,7 @@ func isWorkDay(date time.Time) bool {
 	//定义方法
 	isHoliday := func(d time.Time) bool {
 		y := date.Year()
-		holidaysOfYear, ok := holiday.HolidayMap[y]
+		holidaysOfYear, ok := holiday.HolidaysMap[y]
 		if !ok {
 			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
 		}
@@ -57,7 +57,7 @@ func isWorkDay(date time.Time) bool {
 
 	isTX := func(d time.Time) bool {
 		y := date.Year()
-		holidaysOfYear, ok := holiday.HolidayMap[y]
+		holidaysOfYear, ok := holiday.HolidaysMap[y]
 		if !ok {
 			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
 		}

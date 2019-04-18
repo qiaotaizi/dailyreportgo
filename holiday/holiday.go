@@ -1,6 +1,8 @@
 package holiday
 
-import "time"
+import (
+	"time"
+)
 
 //手动维护一套节假日
 
@@ -10,12 +12,12 @@ const (
 )
 
 type Holiday struct {
-	M int  //月份
-	D int  //日期
-	T int  //类型 Rest/Work
+	M int //月份
+	D int //日期
+	T int //类型 Rest/Work
 }
 
-var HolidayMap = map[int][]Holiday{
+var HolidaysMap = map[int][]Holiday{
 	2019:
 	{
 		{1, 1, Rest},
@@ -54,37 +56,29 @@ var HolidayMap = map[int][]Holiday{
 		{10, 12, Work},
 	},
 	//2020年后续完善
+	2020:{
+		{1,1,Rest},
+	},
 }
 
 //检查当前时间是不是即将耗尽已维护的假期
 //未定义年份返回true
 //当前日期之后没有假期返回true
 func HolidayExhaustingInAMonth(date time.Time) bool {
-	hs,ok:=HolidayMap[date.Year()]
-	if !ok{
+	hs, ok := HolidaysMap[date.Year()]
+	if !ok {
 		return true
 	}
-	//nd:= yearLastDay(date)
-	//dur:=nd.Sub(date)
-	//if dur<24*time.Hour*30{
-	//	return true
-	//}
-	for _,h:=range hs{
-		if h.T==Rest{
+	for _, h := range hs {
+		if h.T == Rest {
 			//发现后续假期
-			if time.Month(h.M)>date.Month(){
+			if time.Month(h.M) > date.Month() {
 				return false
 			}
-			if time.Month(h.M)==date.Month() && h.D>date.Day(){
+			if time.Month(h.M) == date.Month() && h.D >= date.Day() {
 				return false
 			}
 		}
 	}
-	return true
+	return HolidayExhaustingInAMonth(date.AddDate(1, int(1-date.Month()), 1-date.Day()))
 }
-
-//获取年底
-//func yearLastDay(date time.Time) time.Time {
-//	return date.AddDate(1,int(1-date.Month()),-date.Day())
-//}
-
