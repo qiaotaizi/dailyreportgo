@@ -78,3 +78,14 @@ func isWorkDay(date time.Time) bool {
 	}
 	return isTX(date)
 }
+
+//计算两个时间之间的日期数
+//不足一天的向下取整
+func daysBetweenTimes(startTime time.Time,endTime time.Time) int{
+	hourCount:=int(endTime.Sub(startTime).Hours())
+	a,b:=hourCount/24,hourCount%24
+	if b==0{
+		return a
+	}
+	return a+1
+}

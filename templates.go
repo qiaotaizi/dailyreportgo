@@ -74,7 +74,7 @@ var reportGeneratePosition string
 func init() {
 	reportTemplatePosition = strings.Join([]string{userHome, "Documents", "dailyReport", reportTemplateName}, string(os.PathSeparator))
 	codeReviewTemplatePosision = strings.Join([]string{userHome, "Documents", "dailyReport", codeReviewTemplateName}, string(os.PathSeparator))
-	reportGeneratePosition = strings.Join([]string{userHome, "Documents", "dailyReport", "%s日报.dr"}, string(os.PathSeparator))
+	reportGeneratePosition = strings.Join([]string{userHome, "Documents", "dailyReport", "%s日报go.dr"}, string(os.PathSeparator))
 }
 
 //如果模板不存在则生成一套默认的
@@ -136,12 +136,19 @@ func selectMissionsIntoReportContent(rc *reportContent, missions []jiraMissionVo
 					"%s http://jira.ttpai.cn/browse/%s %d%%",
 					m.Title,
 					m.Id,
-					m.progress,
+					calProgress(m.startTime,m.endTime,time.Now()),
 				)})
 		}
 		if m.inProgressNextWorkDay() {
 			c2++
-			rc.tomorrowTargets = append(rc.tomorrowTargets, reportListVo{c2, m.Title})
+			rc.tomorrowTargets = append(rc.tomorrowTargets, reportListVo{
+				c2,
+				fmt.Sprintf(
+				"%s http://jira.ttpai.cn/browse/%s %d%%",
+				m.Title,
+				m.Id,
+					calProgress(m.startTime,m.endTime,nextWorkDay),
+				)})
 		}
 	}
 	if len(rc.todayAchievements) == 0 {
@@ -150,6 +157,16 @@ func selectMissionsIntoReportContent(rc *reportContent, missions []jiraMissionVo
 	if len(rc.tomorrowTargets) == 0 {
 		rc.tomorrowTargets = append(rc.tomorrowTargets, reportListVo{1, "无"})
 	}
+}
+
+//计算进度
+//需要改算法
+func calProgress(startTime time.Time, endTime time.Time, targetTime time.Time) int {
+	totalDayCount:=daysBetweenTimes(startTime,endTime)
+	fmt.Println(totalDayCount)
+	progressedDayCount:=daysBetweenTimes(startTime,targetTime)
+	fmt.Println(progressedDayCount)
+	return 0
 }
 
 type reportContent struct {

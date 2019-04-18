@@ -9,7 +9,7 @@ var reportConfig *drCfg
 
 func main() {
 	if !isWorkDay(time.Now()){
-
+		log.Fatal("today is not work day, generating aborted")
 	}
 	log.Println("welcome!")
 	//解析配置(配置不存在时生成一套默认配置,和模板)

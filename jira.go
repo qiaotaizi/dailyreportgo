@@ -106,15 +106,10 @@ func jiraCalendarMission(userId int) []jiraMissionVo {
 		if err != nil {
 			log.Fatalf("parsing time %s error", m.End)
 		}
-		m.progress=calProgress()
 	}
 	return missions
 }
 
-func calProgress() int {
-	//计算完成度
-	return 0
-}
 
 //接收jira用户json数据
 type jiraUserVo struct {
@@ -146,7 +141,6 @@ type jiraMissionVo struct {
 	DatesError       bool   `json:"datesError"`
 	startTime        time.Time
 	endTime          time.Time
-	progress         int
 }
 
 //任务当前日期执行中
