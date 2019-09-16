@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/qiaotaiziqtz/dailyreportgo/holiday"
 	"log"
 	"time"
 )
@@ -37,14 +36,14 @@ func isWorkDay(date time.Time) bool {
 	//定义方法
 	isHoliday := func(d time.Time) bool {
 		y := date.Year()
-		holidaysOfYear, ok := holiday.HolidaysMap[y]
+		holidaysOfYear, ok := HolidaysMap[y]
 		if !ok {
 			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
 		}
 		for _, h := range holidaysOfYear {
 			if time.Month(h.M) == date.Month() && h.D == date.Day() {
 				//找到当前日期
-				return h.T == holiday.Rest
+				return h.T == Rest
 			}
 		}
 		return false
@@ -57,14 +56,14 @@ func isWorkDay(date time.Time) bool {
 
 	isTX := func(d time.Time) bool {
 		y := date.Year()
-		holidaysOfYear, ok := holiday.HolidaysMap[y]
+		holidaysOfYear, ok := HolidaysMap[y]
 		if !ok {
 			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
 		}
 		for _, h := range holidaysOfYear {
 			if time.Month(h.M) == date.Month() && h.D == date.Day() {
 				//找到当前日期
-				return h.T == holiday.Work
+				return h.T == Work
 			}
 		}
 		return false
