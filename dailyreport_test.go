@@ -12,7 +12,7 @@ func TestNeedGitLabData(t *testing.T) {
 }
 
 func TestCreateTemplatesIfNotExist(t *testing.T) {
-	createTemplatesIfNotExist()
+	//createTemplatesIfNotExist()
 }
 
 func TestHoliday(t *testing.T) {
@@ -35,8 +35,8 @@ func TestHoliday(t *testing.T) {
 }
 
 func TestCalProgress(t *testing.T) {
-	t1, _ := time.Parse("2006-01-02", "2019-04-01")
-	t2, _ := time.Parse("2006-01-02", "2019-04-30")
+	//t1, _ := time.Parse("2006-01-02", "2019-04-01")
+	//t2, _ := time.Parse("2006-01-02", "2019-04-30")
 	//t3, _ := time.Parse("2006-01-02", "2019-04-14")
-	calProgress(t1,t2,time.Now())
+	//calProgress(t1,t2,time.Now())
 }

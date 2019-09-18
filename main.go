@@ -2,15 +2,19 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 )
 
 //重构这个项目
 //使用命令行参数进行各项参数的输入
 
+//日志函数定义
+//罗嗦模式下
+//若args长度为0,message后会主动追加换行
+//若args长度非零,message只会进行格式化,不会进行换行符追加
 var lg func(message string,args ...interface{})
 
+//啰嗦日志输出
 func lgVerbose(message string,args ...interface{}){
 	if len(args)==0{
 		log.Println(message)
@@ -19,28 +23,54 @@ func lgVerbose(message string,args ...interface{}){
 	}
 }
 
+//静默日志输出
 func lgSilence(message string,args ...interface{}){
 	//什么也不做
 }
 
-func main(){
-	c:=parseCmd()
+//命令行参数保存
+var c *cmd
 
-	if c.help || c.empty(){
-		flag.Usage()
+var testFlag=true
+
+func init(){
+	if testFlag{
 		return
 	}
+
+	c=parseCmd()
+	//控制日志输出模式
 	if c.verbose{
 		lg=lgVerbose
 	}else{
 		lg=lgSilence
 	}
-	fmt.Println(c.receiver)
+}
+
+func main(){
+	defer releaseResources()//释放资源
+
+	//打印帮助
+	if c.help || c.empty(){
+		flag.Usage()
+		return
+	}
+
+	if failField,ok:=c.checkMust();!ok{
+		log.Fatalf("字段%s必填,请使用%s -h查看帮助\n",failField,commandName)
+	}
+}
+
+func releaseResources(){
+	err:=templateFile.Close()
+	if err!=nil{
+		lg("释放模板文件时异常: %v\n",err)
+	}
 }
 
 
 
-var reportConfig *drCfg
+//var reportConfig *drCfg
 
 //func main() {
 //	if !isWorkDay(time.Now()){

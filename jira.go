@@ -13,8 +13,13 @@ import (
 
 var jiraHttpClient http.Client
 
-const sessionIdName = "JSESSIONID"
-
+const (
+	sessionIdName = "JSESSIONID"
+	jiraLoginParam="登录"
+	jiraLoginUrl="http://jira.ttpai.cn/login.jsp"
+	jiraCalendarForUserUrl="http://jira.ttpai.cn/rest/mailrucalendar/1.0/calendar/forUser"
+	jiraCalendarJsonRequestUrl ="http://jira.ttpai.cn/rest/mailrucalendar/1.0/calendar/events/%d?start=%s&end=%s"
+)
 var sessionIdCookie *http.Cookie
 
 //初始化httpClient,并设置cookie管理
@@ -28,23 +33,23 @@ func init() {
 
 //jira登录
 func jiraLogin() {
-	log.Printf("login jira with user %s", reportConfig.JiraLoginName)
+	lg("登录jira,用户名: %s\n", c.jiraUserName)
 
 	form := url.Values{
-		"os_username": {reportConfig.JiraLoginName},
-		"os_password": {reportConfig.JiraLoginPwd},
-		"login":       {reportConfig.JiraLoginParam},
+		"os_username": {c.jiraUserName},
+		"os_password": {c.jiraUserName},
+		"login":       {jiraLoginParam},
 	}
 	formString := form.Encode()
-	req, err := http.NewRequest(http.MethodPost, reportConfig.JiraLoginUrl, strings.NewReader(formString))
+	req, err := http.NewRequest(http.MethodPost, jiraLoginUrl, strings.NewReader(formString))
 	if err != nil {
-		log.Fatalf("creating jira login request failed: %v", err)
+		log.Fatalf("构建jira登录请求失败: %v\n", err)
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := jiraHttpClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		log.Fatalf("post jira login request failed: %v", err)
+		log.Fatalf("jira登录失败: %v\n", err)
 	}
 	cks := jiraHttpClient.Jar.Cookies(req.URL)
 	for _, ck := range cks {
@@ -56,23 +61,24 @@ func jiraLogin() {
 }
 
 //获取jira用户数据
+//返回用户id
 func jiraForUser() int {
-	req, err := http.NewRequest(http.MethodGet, reportConfig.JiraCalendarForUserUrl, nil)
+	req, err := http.NewRequest(http.MethodGet, jiraCalendarForUserUrl, nil)
 	if err != nil {
-		log.Fatalf("creating jira user info request failed: %v", err)
+		log.Fatalf("构建jira用户数据请求失败: %v\n", err)
 	}
 	req.AddCookie(sessionIdCookie)
 	resp, err := jiraHttpClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		log.Fatalf("get jira user info request failed: %v", err)
+		log.Fatalf("获取jira用户数据失败: %v\n", err)
 	}
 	var users []jiraUserVo
 	if err := json.NewDecoder(resp.Body).Decode(&users); err != nil {
-		log.Fatalf("parse jira user info json failed: %v", err)
+		log.Fatalf("用户数据json数据转对象失败: %v", err)
 	}
 	for _, user := range users {
-		if strings.HasPrefix(user.Name, reportConfig.ReporterName) {
+		if strings.HasPrefix(user.Name, c.reporterName) {
 			return user.Id
 		}
 	}
@@ -82,9 +88,9 @@ func jiraForUser() int {
 //获取任务列表
 func jiraCalendarMission(userId int) []jiraMissionVo {
 	start, end := monthStartAndEnd()
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf(reportConfig.JiraCalendarJsonRequestUrl, userId, start, end), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf(jiraCalendarJsonRequestUrl, userId, start, end), nil)
 	if err != nil {
-		log.Fatalf("creating jira missions request failed: %v", err)
+		log.Fatalf("构建jira任务数据请求失败: %v", err)
 	}
 	req.AddCookie(sessionIdCookie)
 	resp, err := jiraHttpClient.Do(req)
