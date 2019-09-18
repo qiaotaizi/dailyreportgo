@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 )
 
@@ -9,7 +10,7 @@ import (
 //使用命令行参数进行各项参数的输入
 
 //日志函数定义
-//罗嗦模式下
+//啰嗦模式下
 //若args长度为0,message后会主动追加换行
 //若args长度非零,message只会进行格式化,不会进行换行符追加
 var lg func(message string,args ...interface{})
@@ -28,19 +29,26 @@ func lgSilence(message string,args ...interface{}){
 	//什么也不做
 }
 
-//命令行参数保存
-var c *cmd
+func warn(message string, args ...interface{}){
+	fmt.Printf("%c[0;31m",0x1B)
+	fmt.Printf("警告: "+message,args...)
+	fmt.Printf("%c[0m",0x1B)
+}
 
-var testFlag=true
+//命令行参数保存
+var params *cmd
+
+//使用这个标志在单元测试阶段关闭出发init函数
+var testFlag=false
 
 func init(){
 	if testFlag{
 		return
 	}
 
-	c=parseCmd()
+	params =parseCmd()
 	//控制日志输出模式
-	if c.verbose{
+	if params.Verbose{
 		lg=lgVerbose
 	}else{
 		lg=lgSilence
@@ -51,14 +59,24 @@ func main(){
 	defer releaseResources()//释放资源
 
 	//打印帮助
-	if c.help || c.empty(){
-		flag.Usage()
+	if params.Help || params.empty(){
+		fmt.Printf("%s命令的参数及其含义: \n",commandName)
+		flag.PrintDefaults()
 		return
 	}
 
-	if failField,ok:=c.checkMust();!ok{
-		log.Fatalf("字段%s必填,请使用%s -h查看帮助\n",failField,commandName)
+	//执行生成命令前,校验必填项
+	if failField,ok:= params.checkMust();!ok{
+		warn("字段%s必填,请使用%s -h查看帮助\n",failField,commandName)
+		return
 	}
+
+	reportContent,err:=genReportString()
+	if err!=nil{
+		warn("生成日报文本时发生异常: %v\n",err)
+		return
+	}
+	lg("填充模板后的内容:\n%s\n",reportContent)
 }
 
 func releaseResources(){

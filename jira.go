@@ -24,20 +24,17 @@ var sessionIdCookie *http.Cookie
 
 //初始化httpClient,并设置cookie管理
 func init() {
-	jiraCookieJar, err := cookiejar.New(nil)
-	if err != nil {
-		log.Fatalf("jira http client init failed: %v", err)
-	}
+	jiraCookieJar, _ := cookiejar.New(nil)//根据源代码,这个函数并不会产生err,这里忽略返回值中的err
 	jiraHttpClient = http.Client{Jar: jiraCookieJar}
 }
 
-//jira登录
+//jira登录,让sessionIdCookie变量管理登录信息
 func jiraLogin() {
-	lg("登录jira,用户名: %s\n", c.jiraUserName)
+	lg("登录jira,用户名: %s\n", params.JiraUserName)
 
 	form := url.Values{
-		"os_username": {c.jiraUserName},
-		"os_password": {c.jiraUserName},
+		"os_username": {params.JiraUserName},
+		"os_password": {params.JiraUserName},
 		"login":       {jiraLoginParam},
 	}
 	formString := form.Encode()
@@ -78,7 +75,7 @@ func jiraForUser() int {
 		log.Fatalf("用户数据json数据转对象失败: %v", err)
 	}
 	for _, user := range users {
-		if strings.HasPrefix(user.Name, c.reporterName) {
+		if strings.HasPrefix(user.Name, params.ReporterName) {
 			return user.Id
 		}
 	}

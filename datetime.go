@@ -23,7 +23,7 @@ var nextWorkDay time.Time
 func init() {
 	nextWorkDay = time.Now()
 	for true {
-		nextWorkDay.AddDate(0, 0, 1)
+		nextWorkDay=nextWorkDay.AddDate(0, 0, 1)
 		if isWorkDay(nextWorkDay) {
 			break
 		}
@@ -33,42 +33,65 @@ func init() {
 //判断日期是否是工作日
 //逻辑:判断是否是法定节假日,是,返回false,不是,判断是否是周末,是,返回false,不是返回true
 func isWorkDay(date time.Time) bool {
-	//定义方法
-	isHoliday := func(d time.Time) bool {
-		y := date.Year()
-		holidaysOfYear, ok := HolidaysMap[y]
-		if !ok {
-			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
-		}
-		for _, h := range holidaysOfYear {
-			if time.Month(h.M) == date.Month() && h.D == date.Day() {
-				//找到当前日期
-				return h.T == Rest
-			}
-		}
-		return false
-	}
 
 	isWeekend := func(d time.Time) bool {
 		wkd := date.Weekday()
 		return wkd == time.Saturday || wkd == time.Sunday
 	}
 
-	isTX := func(d time.Time) bool {
+	isHoliday_ := func(d time.Time) bool {
 		y := date.Year()
-		holidaysOfYear, ok := HolidaysMap[y]
+		holidaysOfYear, ok := holidaysMap[y]
 		if !ok {
 			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
 		}
 		for _, h := range holidaysOfYear {
-			if time.Month(h.M) == date.Month() && h.D == date.Day() {
+			if time.Month(h.m) == date.Month() && h.d == date.Day() {
 				//找到当前日期
-				return h.T == Work
+				return h.t == rest
 			}
 		}
 		return false
 	}
 
+	//判断是否是调休
+	isTX_ := func(d time.Time) bool {
+		y := date.Year()
+		holidaysOfYear, ok := holidaysMap[y]
+		if !ok {
+			log.Fatalf("please maintain holidays of year %d before generating the daily report", y)
+		}
+		for _, h := range holidaysOfYear {
+			if time.Month(h.m) == date.Month() && h.d == date.Day() {
+				//找到当前日期
+				return h.t == work
+			}
+		}
+		return false
+	}
+
+	var isHoliday,isTX func(d time.Time) bool
+
+
+	balanceFlag:=holidayBalanceByNow()
+
+	switch balanceFlag {
+	case enough://维护的假期充足,应用正常的假期/调休判断方法
+		isHoliday=isHoliday_
+		isTX=isTX_
+	case exhausting://维护的假期即将耗尽,应用正常的假期/调休判断方法,但给出警告
+		isHoliday=isHoliday_
+		isTX=isTX_
+		warn("假期库即将耗尽, 请尽快维护")
+	default://exhausted 维护的假期库已经耗尽,假期判断和调休判断总是返回false,并且给出警告
+		isHoliday= func(time.Time) bool {
+			return false
+		}
+		isTX= func(time.Time) bool {
+			return false
+		}
+		warn("假期库已经耗尽, 法定节假日的推断逻辑将被禁用, 下个工作日的推断可能会不准确,请尽快维护假期库")
+	}
 	if isHoliday(date) {
 		return false
 	}
