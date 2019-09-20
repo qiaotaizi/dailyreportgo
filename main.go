@@ -3,30 +3,36 @@ package main
 import (
 	"flag"
 	"fmt"
+	"sync"
+	"time"
 )
 
 //重构这个项目
 //使用命令行参数进行各项参数的输入
 
+var outputLock sync.Mutex
+
 func warn(message string, args ...interface{}) {
+	outputLock.Lock()
+	defer outputLock.Unlock()
 	fmt.Printf("%c[0;31m警告: %s%c[0m\n", 0x1B, fmt.Sprintf(message, args...), 0x1B)
 }
 
 func main() {
-	defer func() func() {
-		now_ := now
-		nwd_ := nextWorkDay
-		return func() {
-			now__ := now
-			nwd__ := nextWorkDay
-			if now_ != now__ {
-				warn("全局变量now在程序运行期间发生了变化")
-			}
-			if nwd_ != nwd__ {
-				warn("全局变量nwd在程序运行期间发生了变化")
-			}
-		}
-	}()()
+	//defer func() func() {
+	//	now_ := now
+	//	nwd_ := nextWorkDay
+	//	return func() {
+	//		now__ := now
+	//		nwd__ := nextWorkDay
+	//		if now_ != now__ {
+	//			warn("全局变量now在程序运行期间发生了变化")
+	//		}
+	//		if nwd_ != nwd__ {
+	//			warn("全局变量nwd在程序运行期间发生了变化")
+	//		}
+	//	}
+	//}()()
 
 	defer releaseResources() //释放资源
 
@@ -44,6 +50,10 @@ func main() {
 		warn("字段%s必填,请使用%s -h查看帮助", failField, commandName)
 		return
 	}
+
+	//所有校验完成,开始生成日报
+
+	go spinner(100*time.Millisecond)
 
 	reportContent, err := genReportString()
 	if err != nil {
