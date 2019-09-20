@@ -5,6 +5,6 @@ import (
 	"testing"
 )
 
-func TestInit(t *testing.T){
+func TestInit(t *testing.T) {
 	fmt.Println("testing")
 }

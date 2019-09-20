@@ -20,8 +20,8 @@ func parseCmd() *cmd {
 	result := new(cmd)
 	flag.BoolVar(&result.Help, "h", false, "显示帮助")
 	flag.StringVar(&result.Receiver, "r", "", "收件人email,若希望有多个收件人email,请使用';'分割")
-	flag.BoolVar(&result.Verbose, "v", false, "开启啰嗦模式,输出日志")
-	flag.StringVar(&result.Cc, "params", "", "抄送人email,若希望有多个抄送人email,请使用';'分割")
+	flag.BoolVar(&result.Verbose, "v", false, "开启啰嗦模式,输出日志. 啰嗦模式或静默模式都将输出警告")
+	flag.StringVar(&result.Cc, "c", "", "抄送人email,若希望有多个抄送人email,请使用';'分割")
 	flag.StringVar(&result.DepName, "d", "", "报告人部门名称")
 	flag.StringVar(&result.ReporterName, "n", "", "报告人姓名")
 	flag.StringVar(&result.JiraUserName, "un", "", "jira用户名")
@@ -69,9 +69,9 @@ func structCheckMust(structValue reflect.Value) (string, bool) {
 		if !fv.IsZero() {
 			continue
 		}
-		usage:=ft.Tag.Get("usage")
-		if usage!=""{
-			return usage,false
+		usage := ft.Tag.Get("usage")
+		if usage != "" {
+			return usage, false
 		}
 		//must为true且该字段是零值
 		return ft.Name, false

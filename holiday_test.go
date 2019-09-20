@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-func TestHolidayExhaustingInAMonth(t *testing.T){
+func TestHolidayExhaustingInAMonth(t *testing.T) {
 	fmt.Println(exhausting)
 	fmt.Println(exhausted)
 	//ti,_:=time.Parse("2006-01-02","2019-12-18")
-	balance:=holidayBalanceByNow()
+	balance := holidayBalanceByNow()
 	fmt.Println(balance)
 }

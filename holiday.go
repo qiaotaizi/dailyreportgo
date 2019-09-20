@@ -29,8 +29,7 @@ type holiday struct {
 //硬编码是不好的
 //后续应改为由外置json文件来维护
 var holidaysMap = map[int][]holiday{
-	2019:
-	{
+	2019: {
 		{1, 1, rest},
 		{2, 2, work},
 		{2, 3, work},
@@ -56,6 +55,7 @@ var holidaysMap = map[int][]holiday{
 		{9, 13, rest},
 		{9, 14, rest},
 		{9, 15, rest},
+		{9, 29, work},
 		{10, 1, rest},
 		{10, 2, rest},
 		{10, 3, rest},
@@ -91,7 +91,7 @@ func holidayBalanceByGivenDate(date time.Time) holidayBalanceFlag {
 	//获取当年最大假期
 	hArray := holidaysMap[maxYear]
 	if hArray == nil || len(hArray) == 0 {
-		warn("年份表中每个被维护的年份应该至少有一个假期\n")
+		warn("年份表中每个被维护的年份应该至少有一个假期")
 		return exhausted //年份应该至少维护一个假期,否则不应维护
 	}
 	var maxHoliday holiday
@@ -114,5 +114,5 @@ func holidayBalanceByGivenDate(date time.Time) holidayBalanceFlag {
 
 //根据今天时间,判断是否即将耗尽
 func holidayBalanceByNow() holidayBalanceFlag {
-	return holidayBalanceByGivenDate(time.Now())
+	return holidayBalanceByGivenDate(now)
 }
