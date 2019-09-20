@@ -33,59 +33,9 @@ func isWeekend(date time.Time) bool {
 	return wkd == time.Saturday || wkd == time.Sunday
 }
 
-//在包初始化阶段决定isHoliday和isTX函数
+//在包初始化阶段(init函数中)决定isHoliday和isTX函数
 //判断标准是假期库是否已经耗尽
-var isHoliday, isTX = func() (func(d time.Time) bool, func(d time.Time) bool) {
-	isHoliday_ := func(date time.Time) bool {
-		y := date.Year()
-		holidaysOfYear, ok := holidaysMap[y]
-		if !ok {
-			//实际上是不会走到这里的
-			warn("请在假期表中维护%d年的假期及调休数据", y)
-			return false
-		}
-		for _, h := range holidaysOfYear {
-			if time.Month(h.m) == date.Month() && h.d == date.Day() {
-				//找到当前日期
-				return h.t == rest
-			}
-		}
-		return false
-	}
-	isHoliday__ := func(time.Time) bool { return false }
-	//判断是否是调休
-	isTX_ := func(date time.Time) bool {
-		y := date.Year()
-		holidaysOfYear, ok := holidaysMap[y]
-		if !ok {
-			//实际上是不会走到这里的
-			warn("请在假期表中维护%d年的假期及调休数据 ", y)
-			return false
-		}
-		for _, h := range holidaysOfYear {
-			if time.Month(h.m) == date.Month() && h.d == date.Day() {
-				//找到当前日期
-				return h.t == work
-			}
-		}
-		return false
-	}
-	isTX__ := func(time.Time) bool { return false }
-
-	balanceFlag := holidayBalanceByNow()
-
-	switch balanceFlag {
-	case enough: //维护的假期充足,应用正常的假期/调休判断方法
-		lg("假期库充足")
-		return isHoliday_, isTX_
-	case exhausting: //维护的假期即将耗尽,应用正常的假期/调休判断方法,但给出警告
-		warn("假期库即将耗尽, 请尽快维护")
-		return isHoliday_, isTX_
-	default: //exhausted 维护的假期库已经耗尽,假期判断和调休判断总是返回false,并且给出警告
-		warn("假期库已经耗尽, 法定节假日的推断逻辑将被禁用, 下个工作日的推断可能会不准确,请尽快维护假期库")
-		return isHoliday__, isTX__
-	}
-}()
+var isHoliday, isTX func(d time.Time) bool
 
 //计算两个时间之间的日期数
 //不足一天的向下取整
