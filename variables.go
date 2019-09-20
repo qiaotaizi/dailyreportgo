@@ -136,7 +136,7 @@ func mainInit() {
 func lgVerbose(message string, args ...interface{}) {
 	outputLock.Lock()
 	defer outputLock.Unlock()
-	fmt.Printf("\r")//先清除前方输出(主要是干掉spinner输出)
+	fmt.Printf("\r") //先清除前方输出(主要是干掉spinner输出)
 	if len(args) == 0 {
 		log.Println(message)
 	} else {

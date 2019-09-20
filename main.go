@@ -1,21 +1,49 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/go-toast/toast"
 )
 
 //重构这个项目
 //使用命令行参数进行各项参数的输入
 
 var outputLock sync.Mutex
+var warns []string
 
 func warn(message string, args ...interface{}) {
 	outputLock.Lock()
 	defer outputLock.Unlock()
-	fmt.Printf("%c[0;31m警告: %s%c[0m\n", 0x1B, fmt.Sprintf(message, args...), 0x1B)
+	content := fmt.Sprintf(message, args...)
+	fmt.Printf("警告: %s\n", content)
+	warns = append(warns, content)
+}
+
+func warnNotify() {
+	if len(warns) == 0 {
+		return
+	}
+	var message string
+	if len(warns) == 1 {
+		message = warns[0]
+	} else {
+		var buf bytes.Buffer
+		for i, w := range warns {
+			buf.WriteString(fmt.Sprintf("%d.%s\n", i+1, w))
+		}
+		message = buf.String()
+	}
+	notify := toast.Notification{
+		AppID:   "Daily.Report.Generator",
+		Title:   "日报警告",
+		Message: message,
+	}
+	_ = notify.Push()
 }
 
 func main() {
@@ -33,6 +61,8 @@ func main() {
 	//		}
 	//	}
 	//}()()
+
+	defer warnNotify() //收集所有警告,并调用系统通知
 
 	defer releaseResources() //释放资源
 
@@ -53,7 +83,7 @@ func main() {
 
 	//所有校验完成,开始生成日报
 
-	go spinner(100*time.Millisecond)
+	go spinner(100 * time.Millisecond)
 
 	reportContent, err := genReportString()
 	if err != nil {
