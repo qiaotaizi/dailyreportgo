@@ -47,20 +47,6 @@ func warnNotify() {
 }
 
 func main() {
-	//defer func() func() {
-	//	now_ := now
-	//	nwd_ := nextWorkDay
-	//	return func() {
-	//		now__ := now
-	//		nwd__ := nextWorkDay
-	//		if now_ != now__ {
-	//			warn("全局变量now在程序运行期间发生了变化")
-	//		}
-	//		if nwd_ != nwd__ {
-	//			warn("全局变量nwd在程序运行期间发生了变化")
-	//		}
-	//	}
-	//}()()
 
 	defer warnNotify() //收集所有警告,并调用系统通知
 

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"sync"
@@ -97,15 +96,9 @@ func writeReportIntoFile(content string) (string, error) {
 		drDir,
 		filepath.Separator,
 		fileName)
-	rpt, err := os.OpenFile(fullPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModeType)
-	if err != nil {
-		return "", err
-	}
-
-	defer rpt.Close()
-	//向文件写入文本
-	if _, err = rpt.WriteString(content); err != nil {
-		return "", err
+	err:=ioutil.WriteFile(fullPath,[]byte(content),0644)
+	if err!=nil{
+		return "",err
 	}
 	return fullPath, nil
 }
