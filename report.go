@@ -59,7 +59,9 @@ func genReportString() (string, error) {
 			for _, mission := range missions {
 				if boolMethod(mission) {
 					counter++
+					progress := mission.progress(targetDate)
 					missionToday.WriteString(fmt.Sprintf(missionOutPutFormat, counter, mission.Title, mission.Id, mission.progress(targetDate)))
+					lg("任务名: %s,任务开始日期: %s,任务结束日期: %s,目标日期: %s,计算进度: %d%%", mission.Title, mission.Start, mission.End, targetDate, progress)
 				}
 			}
 			result := missionToday.String()
@@ -96,9 +98,9 @@ func writeReportIntoFile(content string) (string, error) {
 		drDir,
 		filepath.Separator,
 		fileName)
-	err:=ioutil.WriteFile(fullPath,[]byte(content),0644)
-	if err!=nil{
-		return "",err
+	err := ioutil.WriteFile(fullPath, []byte(content), 0644)
+	if err != nil {
+		return "", err
 	}
 	return fullPath, nil
 }

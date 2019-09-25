@@ -14,10 +14,10 @@ import (
 //避免golang同一包下多个init函数按照文件字母序调用出现问题
 
 var (
-	now         = time.Now()
-	nextWorkDay time.Time
-	params      *cmd //命令行参数保存
-	//testFlag       = false     //使用这个标志在单元测试阶段关闭出发init函数
+	now            = time.Now()
+	nextWorkDay    time.Time
+	params         *cmd        //命令行参数保存
+	testFlag       = true      //使用这个标志在单元测试阶段关闭出发init函数
 	lg             = lgVerbose //日志函数定义,默认采用罗嗦模式
 	templateFile   *os.File    //模板文件
 	jiraHttpClient http.Client //http客户端-访问jira
@@ -30,11 +30,10 @@ const (
 )
 
 func init() {
-	//if testFlag {
-	//	return
-	//}
-	mainInit()
-
+	//当测试阶段,跳过命令行参数的校验
+	if !testFlag {
+		mainInit()
+	}
 	//初始化isHoliday,isTX函数
 	holidayJudgeInit()
 

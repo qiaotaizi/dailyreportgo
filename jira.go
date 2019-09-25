@@ -199,12 +199,12 @@ func (mission jiraMissionVo) progress(targetDate time.Time) int {
 	step := 24 * time.Hour
 	//初始化分子和分母
 	var numerator, denominator int
-	for date := start; !date.After(end); date = date.Add(step) {
+	for date := start; date.Before(end); date = date.Add(step) {
 		if !isWorkDay(date) {
 			continue
 		}
 		denominator++
-		if !date.After(targetDate) {
+		if date.Before(targetDate) {
 			numerator++
 		}
 	}

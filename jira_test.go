@@ -36,8 +36,8 @@ func TestJsonDecodeSingle(t *testing.T) {
 }
 
 func TestProgress(t *testing.T) {
-	start, _ := time.Parse(dateFormat, "2019-09-15")
-	end, _ := time.Parse(dateFormat, "2019-10-13")
+	start, _ := time.Parse(dateFormat, "2019-09-20")
+	end, _ := time.Parse(dateFormat, "2019-09-26")
 	var mission jiraMissionVo
 	mission.Start = jsonTime(start)
 	mission.End = jsonTime(end)

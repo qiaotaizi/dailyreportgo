@@ -57,7 +57,7 @@ func main() {
 		fmt.Printf("%s命令的参数及其含义: \n", commandName)
 		flag.PrintDefaults()
 		fmt.Println("你可以通过修改下面命令的参数, 快速生成日报:")
-		fmt.Println(`go run . -d="你所在的部门" -n="你的名字" -c="抄送人邮箱" -r="收件人邮箱" -un="你的jira登录用户名" -up="你的jira登录密码"`)
+		fmt.Printf(`%s -d="你所在的部门" -n="你的名字" -c="抄送人邮箱" -r="收件人邮箱" -un="你的jira登录用户名" -up="你的jira登录密码"`, commandName)
 		return
 	}
 
