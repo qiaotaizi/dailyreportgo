@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-const commandName = "dailyreport"
+const commandName = "dailyreportgo"
 
 type cmd struct {
 	filler
