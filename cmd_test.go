@@ -15,12 +15,12 @@ type myStruct struct {
 
 type subStruct struct {
 	d float64
-	e rune `must:"true"`
+	e rune `must:"true" usage:"eee"`
 	subSubStruct
 }
 
 type subSubStruct struct {
-	f int `must:"true"`
+	f int `must:"true" usage:"fff"`
 }
 
 func TestStuctCheckMust(t *testing.T) {

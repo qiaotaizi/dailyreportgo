@@ -45,7 +45,7 @@ func genReportString() (string, error) {
 		return "", errors.New("获取jira任务表失败")
 	}
 
-	fillerComplete := func(f *filler) {
+	fillerComplete := func(f filler) {
 		f.Date = now.Format("2006年1月2日")
 		f.PAndS = "1.无"
 		//并发拼接任务字符串
@@ -76,7 +76,7 @@ func genReportString() (string, error) {
 		wg.Wait()
 	}
 
-	fillerComplete(&params.filler)
+	fillerComplete(params.filler)
 
 	err = parsedTmpl.Execute(buf, params.filler)
 	if err != nil {
