@@ -17,7 +17,7 @@ func iterateStructField(structValue reflect.Value, hook func(fieldType reflect.S
 	for i := 0; i < structValue.NumField(); i++ {
 		ft := structType.Field(i)
 		fv := structValue.Field(i)
-		fmt.Println("----",fv.Kind())
+		fmt.Println("----", fv.Kind())
 		if fv.Kind() == reflect.Struct {
 			if failField, err := iterateStructField(fv, hook); err != nil {
 				return failField, err

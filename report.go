@@ -49,7 +49,7 @@ func genReportString() (string, error) {
 		f.Date = now.Format("2006年1月2日")
 		f.PAndS = "1.无"
 		//并发拼接任务字符串
-		missionOutPutFormat := "%d. %s %s %d%%"
+		missionOutPutFormat := "%d. %s %s %d%%\n"
 
 		var wg sync.WaitGroup
 		collector := func(missions []jiraMissionVo, stringField *string, boolMethod func(jiraMissionVo) bool, targetDate time.Time) {

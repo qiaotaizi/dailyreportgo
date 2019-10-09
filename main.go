@@ -52,6 +52,13 @@ func main() {
 
 	defer releaseResources() //释放资源
 
+	//打印历史
+	if params.History {
+		fmt.Println("最近的执行参数如下:")
+		printHistory()
+		return
+	}
+
 	//打印帮助
 	if params.Help || params.empty() {
 		fmt.Printf("%s命令的参数及其含义: \n", commandName)
@@ -69,7 +76,10 @@ func main() {
 
 	//所有校验完成,开始生成日报
 
+	//进度效果线程
 	go spinner(100 * time.Millisecond)
+	//记录本次命令线程
+	go recordCmd()
 
 	reportContent, err := genReportString()
 	if err != nil {

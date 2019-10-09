@@ -14,6 +14,8 @@ type cmd struct {
 
 	JiraUserName string `must:"true" usage:"jira登录用户名"`
 	JiraPwd      string `must:"true" usage:"jira登录用户密码"`
+
+	History bool
 }
 
 func parseCmd() *cmd {
@@ -26,6 +28,7 @@ func parseCmd() *cmd {
 	flag.StringVar(&result.ReporterName, "n", "", "报告人姓名")
 	flag.StringVar(&result.JiraUserName, "un", "", "jira用户名")
 	flag.StringVar(&result.JiraPwd, "up", "", "jira用户密码")
+	flag.BoolVar(&result.History, "history", false, "显示历史命令,最多100条")
 	flag.Parse()
 	return result
 }

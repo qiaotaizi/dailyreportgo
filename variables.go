@@ -17,7 +17,7 @@ var (
 	now            = time.Now()
 	nextWorkDay    time.Time
 	params         *cmd        //命令行参数保存
-	testFlag       = false      //使用这个标志在单元测试阶段关闭出发init函数
+	testFlag       = false     //使用这个标志在单元测试阶段关闭出发init函数
 	lg             = lgVerbose //日志函数定义,默认采用罗嗦模式
 	templateFile   *os.File    //模板文件
 	jiraHttpClient http.Client //http客户端-访问jira
