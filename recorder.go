@@ -18,6 +18,10 @@ func recordCmd() {
 	commandLine2Record := func() []byte {
 		var buf bytes.Buffer
 		for _, arg := range os.Args[1:] {
+			//使用双引号包裹所有非flag参数
+			if arg[0] != '-' {
+				arg = fmt.Sprintf("%c%s%c", '"', arg, '"')
+			}
 			buf.WriteString(arg)
 			buf.WriteRune(' ')
 		}
@@ -49,7 +53,6 @@ func recordCmd() {
 	currentCommand := commandLine2Record()
 
 	if len(historyArr) >= 100 {
-		fmt.Println("11111")
 		//超过100行时,加入本次记录并使用最近100行覆盖文本
 		historyArr = append(historyArr, string(currentCommand))
 		var buf bytes.Buffer
