@@ -7,7 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-toast/toast"
+	//"github.com/go-toast/toast"
+	notifyx "github.com/deckarep/gosx-notifier"
 )
 
 //重构这个项目
@@ -24,7 +25,7 @@ func warn(message string, args ...interface{}) {
 	warns = append(warns, content)
 }
 
-func warnNotify() {
+func warnNotifyOsx() {
 	if len(warns) == 0 {
 		return
 	}
@@ -38,17 +39,35 @@ func warnNotify() {
 		}
 		message = buf.String()
 	}
-	notify := toast.Notification{
-		AppID:   "Daily.Report.Generator",
-		Title:   "日报警告",
-		Message: message,
-	}
-	_ = notify.Push()
+	note := notifyx.NewNotification(message)
+	_ = note.Push()
 }
+
+//func warnNotifyWindows() {
+//	if len(warns) == 0 {
+//		return
+//	}
+//	var message string
+//	if len(warns) == 1 {
+//		message = warns[0]
+//	} else {
+//		var buf bytes.Buffer
+//		for i, w := range warns {
+//			buf.WriteString(fmt.Sprintf("%d.%s\n", i+1, w))
+//		}
+//		message = buf.String()
+//	}
+//	notify := toast.Notification{
+//		AppID:   "Daily.Report.Generator",
+//		Title:   "日报警告",
+//		Message: message,
+//	}
+//	_ = notify.Push()
+//}
 
 func main() {
 
-	defer warnNotify() //收集所有警告,并调用系统通知
+	defer warnNotifyOsx() //收集所有警告,并调用系统通知
 
 	defer releaseResources() //释放资源
 
@@ -91,7 +110,7 @@ func main() {
 	if err != nil {
 		warn("写入日报文本时异常: %v", err)
 	}
-	if err = openReportFileWithNotepad(filePath); err != nil {
+	if err = openReportFileWithSublimeText(filePath); err != nil {
 		warn("使用记事本打开日志文件时异常%v", err)
 	}
 

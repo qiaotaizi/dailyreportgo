@@ -115,3 +115,9 @@ func openReportFileWithNotepad(filePath string) error {
 	c := exec.Command("notepad", filePath)
 	return c.Start()
 }
+
+//mac使用sublime打开文件
+func openReportFileWithSublimeText(filepath string) error {
+	c := exec.Command("/Applications/Sublime Text.app/Contents/MacOS/Sublime Text", filepath)
+	return c.Start()
+}
