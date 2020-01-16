@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var stopSignal = make(chan bool)
+
 func spinner(delay time.Duration) {
 	symbols := `-\|/`
 
@@ -20,6 +22,12 @@ func spinner(delay time.Duration) {
 		for _, r := range symbols {
 			prt(r)
 			time.Sleep(delay)
+		}
+		select {
+		case <-stopSignal:
+			return
+		default:
+			continue
 		}
 	}
 }

@@ -16,10 +16,15 @@ type cmd struct {
 	JiraPwd      string `must:"true" usage:"jira登录用户密码"`
 
 	History bool
+
+	Default bool //使用默认配置
+
+	OpenFileWithTextEditor bool //是否指定编辑器打开文件
 }
 
 func parseCmd() *cmd {
 	result := new(cmd)
+	flag.BoolVar(&result.Default, "m", false, "使用默认配置")
 	flag.BoolVar(&result.Help, "h", false, "显示帮助")
 	flag.StringVar(&result.Receiver, "r", "", "收件人email,若希望有多个收件人email,请使用';'分割")
 	flag.BoolVar(&result.Verbose, "v", false, "开启啰嗦模式,输出日志. 啰嗦模式或静默模式都将输出警告")
@@ -29,6 +34,7 @@ func parseCmd() *cmd {
 	flag.StringVar(&result.JiraUserName, "un", "", "jira用户名")
 	flag.StringVar(&result.JiraPwd, "up", "", "jira用户密码")
 	flag.BoolVar(&result.History, "history", false, "显示历史命令,最多100条")
+	flag.BoolVar(&result.OpenFileWithTextEditor, "e", false, "是否使用文本编辑器打开日志文件")
 	flag.Parse()
 	return result
 }

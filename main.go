@@ -87,6 +87,16 @@ func main() {
 		return
 	}
 
+	//使用默认配置
+	if params.Default {
+		params.Cc = _c
+		params.DepName = _d
+		params.JiraPwd = _up
+		params.JiraUserName = _un
+		params.ReporterName = _n
+		params.Receiver = _r
+	}
+
 	//执行生成命令前,校验必填项
 	if failField, ok := params.checkMust(); !ok {
 		warn("字段%s必填,请使用%s -h查看帮助", failField, commandName)
@@ -105,15 +115,26 @@ func main() {
 		warn("生成日报文本时发生异常: %v", err)
 		return
 	}
-	//将结果写入文件,并且调用notepad打开文件
+
+	//所有io操作执行完毕，停止spinner
+	stopSignal <- true
+
+	//将结果写入文件
 	filePath, err := writeReportIntoFile(reportContent)
 	if err != nil {
 		warn("写入日报文本时异常: %v", err)
 	}
-	if err = openReportFileWithSublimeText(filePath); err != nil {
-		warn("使用记事本打开日志文件时异常%v", err)
-	}
 
+	//使用文本编辑器打开文件或者命令行打印
+	if params.OpenFileWithTextEditor {
+		if err = openReportFileWithSublimeText(filePath); err != nil {
+			warn("使用记事本打开日志文件时异常%v", err)
+		}
+	} else {
+		fmt.Printf("\n日志文件在%s\n", filePath)
+		fmt.Println(reportContent)
+		fmt.Printf("欲编辑文件可使用任意文本编辑器或执行命令\nvim %s\n", filePath)
+	}
 }
 
 func releaseResources() {
