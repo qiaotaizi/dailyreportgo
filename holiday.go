@@ -130,6 +130,7 @@ func holidayBalanceByGivenDate(date time.Time) holidayBalanceFlag {
 		h := hArray[i]
 		if h.t == rest {
 			maxHoliday = h
+			break
 		}
 	}
 	//计算两天之间的日期数

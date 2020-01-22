@@ -67,15 +67,15 @@ func recordCmd() {
 		}
 	} else {
 		//未超过100行时,直接将本次参数拼接进去
-		f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE, 0644)
+		f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 		if err != nil {
-			warn("命令记录文件打开写入时出现问题,-history参数可用性将受到影响: %v", err)
+			warn("命令记录文件打开时出现问题,-history参数可用性将受到影响: %v", err)
 			return
 		}
 		defer f.Close()
 		_, err = f.Write(currentCommand)
 		if err != nil {
-			warn("命令记录文件打开写入时出现问题,-history参数可用性将受到影响: %v", err)
+			warn("命令记录文件写入时出现问题,-history参数可用性将受到影响: %v", err)
 		}
 	}
 }
