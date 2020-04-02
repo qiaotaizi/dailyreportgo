@@ -50,9 +50,10 @@ func genReportString() (string, error) {
 		f.PAndS = "1.无"
 		//并发拼接任务字符串
 		missionOutPutFormat := "%d. %s %s %d%%\n"
+		missionNextWorkdayOutPutFormat:="%d. %s %s\n"
 
 		var wg sync.WaitGroup
-		collector := func(missions []jiraMissionVo, stringField *string, boolMethod func(jiraMissionVo) bool, targetDate time.Time) {
+		collector := func(missions []jiraMissionVo, stringField *string, boolMethod func(jiraMissionVo) bool, targetDate time.Time,showPercent bool) {
 			defer wg.Done()
 			var missionToday bytes.Buffer
 			counter := 0
@@ -60,8 +61,16 @@ func genReportString() (string, error) {
 				if boolMethod(mission) {
 					counter++
 					progress := mission.progress(targetDate)
-					missionToday.WriteString(fmt.Sprintf(missionOutPutFormat, counter, mission.Title, mission.Id, mission.progress(targetDate)))
-					lg("任务名: %s,任务开始日期: %s,任务结束日期: %s,目标日期: %s,计算进度: %d%%", mission.Title, mission.Start, mission.End, targetDate, progress)
+
+					if showPercent {
+						missionToday.WriteString(fmt.Sprintf(missionOutPutFormat, counter, mission.Title, mission.Id, progress))
+						lg("任务名: %s,任务开始日期: %s,任务结束日期: %s,目标日期: %s,计算进度: %d%%", mission.Title, mission.Start, mission.End, targetDate, progress)
+					}else{
+						missionToday.WriteString(fmt.Sprintf(missionNextWorkdayOutPutFormat, counter, mission.Title, mission.Id))
+						lg("任务名: %s,任务开始日期: %s,任务结束日期: %s,目标日期: %s", mission.Title, mission.Start, mission.End, targetDate)
+
+					}
+
 				}
 			}
 			result := missionToday.String()
@@ -69,10 +78,10 @@ func genReportString() (string, error) {
 		}
 		//负责收集当天任务,并写入相应字段
 		wg.Add(1)
-		go collector(missions, &(f.Achievements), jiraMissionVo.inProgress, now)
+		go collector(missions, &(f.Achievements), jiraMissionVo.inProgress, now,true)
 		//负责收集下个工作日任务,并写入相应字段
 		wg.Add(1)
-		go collector(missions, &(f.Targets), jiraMissionVo.inProgressNextWorkDay, nextWorkDay)
+		go collector(missions, &(f.Targets), jiraMissionVo.inProgressNextWorkDay, nextWorkDay,false)
 		wg.Wait()
 	}
 
